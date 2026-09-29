@@ -2,12 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Bookstore Demo</title>
-  <style>body{font-family:Arial;margin:20px}button{margin-top:8px}</style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <h1>Bookstore Demo</h1>
-  <div id="books"></div>
+  <nav class="nav">
+    <div class="nav-left">Bookstore Demo</div>
+    <div class="nav-right">
+      <a href="/index.html">Items</a>
+      <a href="/orders.html">Orders</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>Items</h1>
+    <div id="books" class="grid"></div>
+  </main>
+
   <script>
     async function loadBooks(){
       const res = await fetch('/books');
@@ -15,18 +27,29 @@
       const container = document.getElementById('books');
       container.innerHTML = '';
       books.forEach(b => {
-        const el = document.createElement('div');
-        el.innerHTML = `<strong>${b.title}</strong> — $${b.price.toFixed(2)} <button data-id="${b.id}">Buy 1</button>`;
-        container.appendChild(el);
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+          <div class="book-title">${escapeHtml(b.title)}</div>
+          <div class="book-price">$${b.price.toFixed(2)}</div>
+          <div class="book-actions">
+            <button data-id="${b.id}" class="buy">Buy 1</button>
+          </div>`;
+        container.appendChild(card);
       });
-      container.querySelectorAll('button').forEach(btn => btn.addEventListener('click', buy));
+      container.querySelectorAll('button.buy').forEach(btn => btn.addEventListener('click', buy));
     }
+
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
     async function buy(e){
       const id = Number(e.target.dataset.id);
       const res = await fetch('/orders', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({items:[{id,qty:1}]})});
+      if (!res.ok) return alert('Order failed');
       const body = await res.json();
       alert('Order placed. Total: $' + body.total.toFixed(2) + '\nOrderId: ' + body.orderId);
     }
+
     loadBooks();
   </script>
 </body>

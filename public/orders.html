@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orders - Bookstore Demo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-left">Bookstore Demo</div>
+    <div class="nav-right">
+      <a href="/index.html">Items</a>
+      <a href="/orders.html">Orders</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>Orders</h1>
+    <div id="orders"></div>
+  </main>
+
+  <script>
+    async function loadOrders(){
+      const res = await fetch('/orders');
+      const orders = await res.json();
+      const container = document.getElementById('orders');
+      container.innerHTML = '';
+      if (!orders.length) { container.innerHTML = '<div class="empty">No orders yet</div>'; return; }
+      orders.slice().reverse().forEach(o => {
+        const el = document.createElement('div');
+        el.className = 'order-card';
+        el.innerHTML = `<div class="order-id">Order ${o.orderId}</div><div class="order-total">Total: $${o.total.toFixed(2)}</div><div class="order-items">${o.items.map(i=> 'ID:'+i.id+' x'+(i.qty||1)).join(', ')}</div>`;
+        container.appendChild(el);
+      });
+    }
+    loadOrders();
+  </script>
+</body>
+</html>
