@@ -22,6 +22,19 @@
     <p class="store-tagline">Curated books to sharpen your craft. Fast shipping, friendly returns.</p>
     <div id="books" class="grid"></div>
   </main>
+  
+  <!-- Order confirmation modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close">×</button>
+      <h2>Order Confirmed</h2>
+      <p id="modal-body"></p>
+      <div class="modal-actions">
+        <a href="/orders.html" class="btn">View Orders</a>
+        <button id="modal-close-btn" class="btn secondary">Close</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     async function loadBooks(){
@@ -51,10 +64,26 @@
     async function buy(e){
       const id = Number(e.target.dataset.id);
       const res = await fetch('/orders', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({items:[{id,qty:1}]})});
-      if (!res.ok) return alert('Order failed');
+      if (!res.ok) return showModal('Order failed. Please try again.');
       const body = await res.json();
-      alert('Order placed. Total: $' + body.total.toFixed(2) + '\nOrderId: ' + body.orderId);
+      showModal(`Total: $${body.total.toFixed(2)}\nOrderId: ${body.orderId}`);
     }
+
+    function showModal(text){
+      const modal = document.getElementById('modal');
+      const body = document.getElementById('modal-body');
+      body.textContent = text;
+      modal.classList.remove('hidden');
+    }
+
+    function hideModal(){
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+    }
+
+    document.addEventListener('click', (ev)=>{
+      if (ev.target.matches('.modal-close') || ev.target.matches('#modal-close-btn')) hideModal();
+    });
 
     loadBooks();
   </script>
