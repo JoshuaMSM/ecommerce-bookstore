@@ -36,19 +36,28 @@
   </main>
 
   <script>
+    async function postJson(url, body){
+      const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+      return res;
+    }
+
     document.getElementById('signin').addEventListener('click', async ()=>{
       const username = document.getElementById('si-user').value;
       const password = document.getElementById('si-pass').value;
-      const res = await fetch('/signin', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password})});
-      if (!res.ok) return alert('Sign in failed');
+      const res = await postJson('/signin', {username,password});
+      if (!res.ok) {
+        const body = await res.json().catch(()=>null);
+        return alert(body && body.error ? body.error : 'Sign in failed');
+      }
       window.location = '/';
     });
+
     document.getElementById('register').addEventListener('click', async ()=>{
       const username = document.getElementById('r-user').value;
       const password = document.getElementById('r-pass').value;
-      const res = await fetch('/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password})});
+      const res = await postJson('/register', {username,password});
       if (!res.ok) {
-        const txt = await res.json(); alert(txt && txt.error ? txt.error : 'Register failed'); return;
+        const txt = await res.json().catch(()=>null); alert(txt && txt.error ? txt.error : 'Register failed'); return;
       }
       window.location = '/';
     });

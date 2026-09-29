@@ -64,7 +64,15 @@
     async function buy(e){
       const id = Number(e.target.dataset.id);
       const res = await fetch('/orders', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({items:[{id,qty:1}]})});
-      if (!res.ok) return showModal('Order failed. Please try again.');
+      if (res.status === 401) {
+        // not signed in - send user to login
+        window.location = '/login.html';
+        return;
+      }
+      if (!res.ok) {
+        const err = await res.json().catch(()=>null);
+        return showModal(err && err.error ? err.error : 'Order failed. Please try again.');
+      }
       const body = await res.json();
       showModal(`Total: $${body.total.toFixed(2)}\nOrderId: ${body.orderId}`);
     }
