@@ -8,7 +8,9 @@
 </head>
 <body>
   <nav class="nav">
-    <div class="nav-left">Bookstore Demo</div>
+    <div class="nav-left">
+      <img src="/logo.svg" alt="Store logo" style="height:28px;vertical-align:middle;margin-right:10px"> Bookstore Demo
+    </div>
     <div class="nav-right">
       <a href="/index.html">Items</a>
       <a href="/orders.html">Orders</a>
@@ -17,6 +19,7 @@
 
   <main class="container">
     <h1>Items</h1>
+    <p class="store-tagline">Curated books to sharpen your craft. Fast shipping, friendly returns.</p>
     <div id="books" class="grid"></div>
   </main>
 
@@ -30,8 +33,11 @@
         const card = document.createElement('div');
         card.className = 'book-card';
         card.innerHTML = `
-          <div class="book-title">${escapeHtml(b.title)}</div>
-          <div class="book-price">$${b.price.toFixed(2)}</div>
+          <div class="book-meta">
+            <div class="book-title">${escapeHtml(b.title)}</div>
+            <div class="book-price">$${b.price.toFixed(2)}</div>
+          </div>
+          <div class="book-desc">${escapeHtml(b.description || '')}</div>
           <div class="book-actions">
             <button data-id="${b.id}" class="buy">Buy 1</button>
           </div>`;

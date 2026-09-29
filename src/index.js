@@ -4,8 +4,18 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const books = [
-  { id: 1, title: 'The Pragmatic Programmer', price: 29.99 },
-  { id: 2, title: 'Clean Code', price: 24.99 }
+  {
+    id: 1,
+    title: 'The Pragmatic Programmer',
+    price: 29.99,
+    description: 'Timeless pragmatic advice for software developers — practical techniques and career guidance.'
+  },
+  {
+    id: 2,
+    title: 'Clean Code',
+    price: 24.99,
+    description: 'A handbook of agile software craftsmanship: write readable, maintainable code.'
+  }
 ];
 
 const orders = []; // in-memory orders
