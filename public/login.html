@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sign in - Bookstore Demo</title>
+  <title> Bookstore Demo</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
     <div class="nav-right">
       <a href="/index.html">Items</a>
       <a href="/orders.html">Orders</a>
-      <a href="/signout">Logout</a>
+      <a id="auth-link" href="/login.html">Login</a>
     </div>
   </nav>
 
@@ -62,6 +62,16 @@
       }
       window.location = '/';
     });
+    // update auth link state
+    (async function updateAuthLink(){
+      try{
+        const res = await fetch('/me');
+        const js = await res.json();
+        const a = document.getElementById('auth-link');
+        if (js && js.user) { a.textContent = `Logout (${js.user.username})`; a.href = '/signout'; }
+        else { a.textContent = 'Login'; a.href = '/login.html'; }
+      }catch(e){/*ignore*/}
+    })();
   </script>
 </body>
 </html>
