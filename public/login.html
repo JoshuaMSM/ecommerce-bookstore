@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign in - Bookstore Demo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-left">
+      <img src="/logo.svg" alt="Store logo" style="height:28px;vertical-align:middle;margin-right:10px"> Bookstore Demo
+    </div>
+    <div class="nav-right">
+      <a href="/index.html">Items</a>
+      <a href="/orders.html">Orders</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>Sign in / Register</h1>
+    <div class="auth-grid">
+      <div class="auth-card">
+        <h3>Sign in</h3>
+        <input id="si-user" placeholder="username">
+        <input id="si-pass" placeholder="password" type="password">
+        <button id="signin" class="btn">Sign in</button>
+      </div>
+      <div class="auth-card">
+        <h3>Register</h3>
+        <input id="r-user" placeholder="username">
+        <input id="r-pass" placeholder="password" type="password">
+        <button id="register" class="btn">Register</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('signin').addEventListener('click', async ()=>{
+      const username = document.getElementById('si-user').value;
+      const password = document.getElementById('si-pass').value;
+      const res = await fetch('/signin', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password})});
+      if (!res.ok) return alert('Sign in failed');
+      window.location = '/';
+    });
+    document.getElementById('register').addEventListener('click', async ()=>{
+      const username = document.getElementById('r-user').value;
+      const password = document.getElementById('r-pass').value;
+      const res = await fetch('/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password})});
+      if (!res.ok) {
+        const txt = await res.json(); alert(txt && txt.error ? txt.error : 'Register failed'); return;
+      }
+      window.location = '/';
+    });
+  </script>
+</body>
+</html>
