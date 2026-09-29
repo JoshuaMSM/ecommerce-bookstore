@@ -1,11 +1,14 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
+app.use(express.static('public'));
 
 const books = [
   { id: 1, title: 'The Pragmatic Programmer', price: 29.99 },
   { id: 2, title: 'Clean Code', price: 24.99 }
 ];
+
+const orders = []; // in-memory orders
 
 app.get('/health', (req, res) => res.send({ status: 'ok' }));
 
@@ -24,8 +27,12 @@ app.post('/orders', (req, res) => {
     const b = books.find(x => x.id === it.id);
     return sum + (b ? b.price * (it.qty || 1) : 0);
   }, 0);
-  res.status(201).send({ orderId: Date.now(), total });
+  const order = { orderId: Date.now(), items, total };
+  orders.push(order);
+  res.status(201).send(order);
 });
+
+app.get('/orders', (req, res) => res.json(orders));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));

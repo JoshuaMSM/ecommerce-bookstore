@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Bookstore Demo</title>
+  <style>body{font-family:Arial;margin:20px}button{margin-top:8px}</style>
+</head>
+<body>
+  <h1>Bookstore Demo</h1>
+  <div id="books"></div>
+  <script>
+    async function loadBooks(){
+      const res = await fetch('/books');
+      const books = await res.json();
+      const container = document.getElementById('books');
+      container.innerHTML = '';
+      books.forEach(b => {
+        const el = document.createElement('div');
+        el.innerHTML = `<strong>${b.title}</strong> — $${b.price.toFixed(2)} <button data-id="${b.id}">Buy 1</button>`;
+        container.appendChild(el);
+      });
+      container.querySelectorAll('button').forEach(btn => btn.addEventListener('click', buy));
+    }
+    async function buy(e){
+      const id = Number(e.target.dataset.id);
+      const res = await fetch('/orders', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({items:[{id,qty:1}]})});
+      const body = await res.json();
+      alert('Order placed. Total: $' + body.total.toFixed(2) + '\nOrderId: ' + body.orderId);
+    }
+    loadBooks();
+  </script>
+</body>
+</html>
