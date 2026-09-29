@@ -60,6 +60,18 @@ app.post('/register', (req, res) => {
   res.status(201).send({ ok: true, user: req.session.user });
 });
 
+app.get('/signout', (req, res) => {
+  // destroy session and redirect to login
+  if (req.session) {
+    req.session.destroy(()=>{
+      res.clearCookie('connect.sid');
+      res.redirect('/login.html');
+    });
+  } else {
+    res.redirect('/login.html');
+  }
+});
+
 app.post('/orders', requireAuth, (req, res) => {
   const { items } = req.body;
   if (!items || !Array.isArray(items)) return res.status(400).send({ error: 'Invalid order' });
